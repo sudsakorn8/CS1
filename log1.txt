@@ -1,0 +1,9 @@
+CS_ratio=0.250000,SNR=-20.000000,trial_num=1  
+CS_ratio=0.250000,SNR=-15.000000,trial_num=1  
+CS_ratio=0.250000,SNR=-10.000000,trial_num=1  
+CS_ratio=0.250000,SNR=-5.000000,trial_num=1  
+CS_ratio=0.250000,SNR=0.000000,trial_num=1  
+CS_ratio=0.250000,SNR=5.000000,trial_num=1  
+CS_ratio=0.250000,SNR=10.000000,trial_num=1  
+CS_ratio=0.250000,SNR=15.000000,trial_num=1  
+CS_ratio=0.250000,SNR=20.000000,trial_num=1  
