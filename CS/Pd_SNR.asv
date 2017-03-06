@@ -39,19 +39,19 @@ for n = 1:CS_num
         %Pd_denoised(i,n) = sum(pd_trial(:,2))/(trial_num);
         fprintf(cRec,'CS_ratio=%f,SNR=%f,trial_num=%d  \n',CS_ratio(n),SNR(i),j);
     end
-    figure;
-    plot(SNR,P_f(:,1),'o-b'); hold on
-    plot(SNR,P_d(:,1),'square-b'); hold on
-    xlabel('SNR(dB)'); ylabel('P');
-    % legend('Traditional CS based SS 20%','Traditional CS based SS 25%','Denoised CS based SS 20%','Denoised CS based SS 25%','Location','SouthEast');
-    legend('P_f','P_d','Location','SouthEast');
-    title(['Traditional CS based on SS ',num2str(CS_ratio(n)*100),'%,recovered by IRLS'] );
-    struct_data.P_d = P_d';
-    struct_data.P_f = P_f';
-    struct_data.SNR = SNR;
-    variable_name = ['struct_data_',num2str(CS_ratio(n)*100)];
-    eval([variable_name,'=struct_data']);
-    save('data.mat',variable_name,'-append'); 
+% %     figure;
+% %     plot(SNR,P_f(:,1),'o-b'); hold on
+% %     plot(SNR,P_d(:,1),'square-b'); hold on
+% %     xlabel('SNR(dB)'); ylabel('P');
+% %     % legend('Traditional CS based SS 20%','Traditional CS based SS 25%','Denoised CS based SS 20%','Denoised CS based SS 25%','Location','SouthEast');
+% %     legend('P_f','P_d','Location','SouthEast');
+% %     title(['Traditional CS based on SS ',num2str(CS_ratio(n)*100),'%,recovered by IRLS'] );
+% %     struct_data.P_d = P_d';
+% %     struct_data.P_f = P_f';
+% %     struct_data.SNR = SNR;
+% %     variable_name = ['struct_data_',num2str(CS_ratio(n)*100)];
+% %     eval([variable_name,'=struct_data']);
+% %     save('data.mat',variable_name,'-append'); 
 end
 toc
 fclose(cRec);

@@ -1,4 +1,4 @@
-function [ Pd,Pd_o,idx_Channel,if_vacant,E,E_ori,lamda_d,a_r ] = CSS_Denoised_CS( SNR,CS_ratio,Sparsity,Pf )
+function [ P_f,P_d,idx_Channel,if_vacant,E,E_ori,lamda_d,a_r ] = CSS_Denoised_CS( SNR,CS_ratio,Sparsity,Pf )
 % Denoised_CS returns the error number of recovery signal (of the 40
 % channels) in one trial using both traditional and proposed denoised CS algorithm
 % input SNR is the signal to noise ratio
@@ -106,10 +106,10 @@ if_occupied=(E>lamda_d);
 % detect_d = if_vacant_d+idx_Channel-ones(Channel_num,1);
 % error_d = sum(abs(detect_d));
 
-detect = sum((ones(Channel_num,1)-idx_Channel).*if_vacant);
-Pd = detect/sum(ones(Channel_num,1)-idx_Channel);
+detect_vacant = sum((ones(Channel_num,1)-idx_Channel).*if_vacant);
+P_f = 1-detect_vacant/sum(ones(Channel_num,1)-idx_Channel);
 detect_occupied = sum(idx_Channel.*if_occupied);
-Pd_o = detect_occupied/sum(idx_Channel);
+P_d = detect_occupied/sum(idx_Channel);
 %detect_d = sum((ones(Channel_num,1)-idx_Channel).*if_vacant_d);
 %Pd_d = detect_d/sum(ones(Channel_num,1)-idx_Channel);
 
