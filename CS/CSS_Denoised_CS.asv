@@ -1,4 +1,4 @@
-function [ P_f,P_d,idx_Channel,if_vacant,E,E_ori,lamda_d,P_d_th,a_r ] = CSS_Denoised_CS( SNR,CS_ratio,Sparsity,Pf )
+function [ P_f,P_d,idx_Channel,if_vacant,E,E_ori,lamda_d,O,a_r ] = CSS_Denoised_CS( SNR,CS_ratio,Sparsity,Pf )
 % Denoised_CS returns the error number of recovery signal (of the 40
 % channels) in one trial using both traditional and proposed denoised CS algorithm
 % input SNR is the signal to noise ratio
@@ -64,8 +64,8 @@ u(N/2) = a_w(N/2)/N;
 [y,Phi] = Zhang_RandomDemodulator(u,R);
 fprintf('RD \n');
 % Recovery signal through CoSaMP
-% u_r = Gao_RobustCSS(y,Phi,N,sqrt(power_e),1e-2*norm(y,2)^2);
-u_r = Zhang_CoSaMP( y,Phi,s );
+u_r = Gao_RobustCSS(y,Phi,N,sqrt(power_e),1e-2*norm(y,2)^2);
+% u_r = Zhang_CoSaMP( y,Phi,s );
 fprintf('Recovered \n');
 % error
 % r = norm(u_r-u,2);
