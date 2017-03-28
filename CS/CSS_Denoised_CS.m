@@ -1,4 +1,4 @@
-function [ P_f,P_d,idx_Channel,if_vacant,E,E_ori,lamda_d,P_d_th,a_r ] = CSS_Denoised_CS( SNR,CS_ratio,Sparsity,Pf )
+function [ P_f,P_d,idx_Channel,if_vacant,E,E_ori,lamda_d,P_d_th,a_w,a_r ] = CSS_Denoised_CS( SNR,CS_ratio,Sparsity,Pf,lamdaRatio )
 % Denoised_CS returns the error number of recovery signal (of the 40
 % channels) in one trial using both traditional and proposed denoised CS algorithm
 % input SNR is the signal to noise ratio
@@ -19,7 +19,7 @@ N_OFDM = Channel_BW / delta_f; % length of a OFDM symbol
 N = N_OFDM * Channel_num; % Original sampling rate
 Channel_used = Channel_num * Sparsity; % number of used Channels
 s = N_OFDM * Channel_used; % Sparsity level
-R = N * CS_ratio;
+R = round(N * CS_ratio);
 
 %%
 % index matrix marks frequencies being occupied
@@ -30,9 +30,9 @@ idx_Channel(:) = 0;
 idx_Channel(idx_1) = 1;
 idx = zeros(N,1);
 for i = 1:Channel_num
-%     idx((i-1)*N_OFDM+1:i*N_OFDM,1) = idx_Channel(i);
+    amp = 1;
     if idx_Channel(i)==1
-        idx((i-1)*N_OFDM+1:i*N_OFDM,1) = ((rand(N_OFDM,1)>0.5)*2-1); % if occupied: 1/-1
+        idx((i-1)*N_OFDM+1:i*N_OFDM,1) = ((rand(N_OFDM,1)>0.5)*2-1)*amp; % if occupied: 1/-1
     else
         idx((i-1)*N_OFDM+1:i*N_OFDM,1) = 0; % if vacant: 0
     end
@@ -40,14 +40,8 @@ end
 
 %Create sparse signal a_w
 a_w = idx;
-
-% noise
-% e = zeros(N,1);
-% SNR = 15; % SNR in dB
-
 power_e = sum(conj(a_w).*a_w)/(10^(SNR/10)*N);
-e = randn(N,1)+1i*randn(N,1);
-e = sqrt(power_e)*e/sqrt(sum(conj(e).*e)/N);
+e = sqrt(0.5*power_e)*randn(N,1)+sqrt(0.5*power_e)*1i*randn(N,1);
 a_w = a_w+e;
 % a_w_o = a_w;
 % a_w = awgn(a_w_o,SNR,'measured');
@@ -60,12 +54,15 @@ for k = 1:N
 end
 u(N/2) = a_w(N/2)/N; 
 
-% Compressing through Random Demodulator
+%% Compressing through Random Demodulator
 [y,Phi] = Zhang_RandomDemodulator(u,R);
-fprintf('RD \n');
-% Recovery signal through CoSaMP
+%% Recovery signal 
 % u_r = Gao_RobustCSS(y,Phi,N,sqrt(power_e),1e-2*norm(y,2)^2);
-u_r = Zhang_CoSaMP( y,Phi,s );
+% u_r = zeros(N,1);
+% u_r = Zhang_CoSaMP( y,Phi,s );
+% u_r = Shen_IRLS(y,Phi,10e-8,s);
+u_r = cs_irls(y,Phi,s);
+% u_r = cs_cosamp(y,Phi,s);
 fprintf('Recovered \n');
 % error
 % r = norm(u_r-u,2);
@@ -76,14 +73,14 @@ for k = 1:N
     a_r(k) = u_r(k)/((exp(-2*pi*1i*(k-N/2)/N)-1)/(2*pi*1i*(k-N/2)));
 end
 a_r(N/2) = u_r(N/2)*N; 
-
+% a_r=0;
 %% Denoised
 %a_r_d = (a_r>power_e) .* a_r;
 
 %% Spectrum Sensing: Energy Detection
 sigma_n = power_e; % noise variance
 % Pf = 0.01; % False alarm probability
-lamda_d = sigma_n*(1+qfuncinv(Pf)/sqrt(N_OFDM/2));
+lamda_d = lamdaRatio*sigma_n*(1+qfuncinv(Pf)/sqrt(N_OFDM));
 % lamda_d =0.3;
 E_a = conj(a_r).*a_r;
 E_a_ori = conj(a_w).*a_w;
@@ -110,7 +107,11 @@ detect_vacant = sum((ones(Channel_num,1)-idx_Channel).*if_vacant);
 P_f = 1-detect_vacant/sum(ones(Channel_num,1)-idx_Channel);
 detect_occupied = sum(idx_Channel.*if_occupied);
 P_d = detect_occupied/sum(idx_Channel);
-P_d_th=qfunc(sqrt(N_OFDM)*(lamda_d/power_e-(1+10^(SNR/10)))/(1+10^(SNR/10)));
+snr = 10^(SNR/10)/Sparsity;
+P_d_th = 1-qfunc((1+snr-lamda_d/sigma_n)/sqrt((2*snr^2+1+2*snr)/N_OFDM));
+
+% P_d_th = qfunc((qfuncinv(Pf)-10^(SNR/10)*sqrt(N_OFDM/2))/(1+10^(SNR/10)));
+% P_d_th = qfunc(sqrt(N/2)*(lamda_d/power_e-(1+10^(SNR/10)))/(1+10^(SNR/10)));
 %detect_d = sum((ones(Channel_num,1)-idx_Channel).*if_vacant_d);
 %Pd_d = detect_d/sum(ones(Channel_num,1)-idx_Channel);
 

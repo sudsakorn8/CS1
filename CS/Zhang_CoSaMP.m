@@ -21,22 +21,23 @@ T = []; % the support set
 %% iteration
 for k=1:s % the iteration time should be no more than the sparsity level 
     %(1) Identification  
-    fprintf('CoSaMP iteration %d \n',k);
+%     fprintf('CoSaMP iteration %d \n',k);
     y = Phi'*v; % form a proxy of the residual from the current samples
     [~,idx]=sort(abs(y),'descend');  
     Omega = idx(1:2*s); % identify the 2s largest components supp(y_2s)
     %(2) Support Merger  
-    T = union(T,Omega); % merge support  
-    %(3) Estimation  
-    if length(T)<=R
-        Phi_t = Phi(:,T);  
-    else 
-        if k == 1  
-            a_k = 0; % initial a_k
-        end  
-        break;
-    end 
-    b_T = (Phi_t'*Phi_t)^(-1)*Phi_t'*u; % Signal estimation by least squares  
+    T = union(T,Omega); % merge support   
+    Phi_t = Phi(:,T); %only for test
+%     (3) Estimation  
+%     if length(T)<=R
+%         Phi_t = Phi(:,T);  
+%     else 
+%         if k == 1  
+%             a_k = 0; % initial a_k
+%         end  
+%         break;
+%     end 
+    b_T = (Phi_t'*Phi_t)\Phi_t'*u; % Signal estimation by least squares  
     %(4) Pruning  
     [~,idx]=sort(abs(b_T),'descend');
     T = T(idx(1:s));
@@ -44,9 +45,9 @@ for k=1:s % the iteration time should be no more than the sparsity level
     a_k(T) = b_T(idx(1:s)); %prune to obtain next approximation
     %(5) Sample Update
     v = u - Phi*a_k; % Update current samples  
-    if norm(v)<1e-6 % halting criterion  
-        break;   
-    end  
+%     if norm(v)<1e-6 % halting criterion  
+%         break;   
+%     end  
 end  
 a = a_k;  
 end
