@@ -15,7 +15,7 @@ while (epsilong>10e-9) && (times<s)
     
     weight=(hat_x_tp.^2+epsilong).^(p/2-1);
     Q_Mat=diag(1./weight,0);
-    hat_x=Q_Mat*T_Mat'*inv(T_Mat*Q_Mat*T_Mat')*y;
+    hat_x=Q_Mat*T_Mat'/(T_Mat*Q_Mat*T_Mat')*y;
     if(norm(hat_x-hat_x_tp,2) < sqrt(epsilong)/100)
         epsilong=epsilong/10;
     end

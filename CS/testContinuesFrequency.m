@@ -1,0 +1,23 @@
+delta_w = 0.1;
+w = -399:delta_w:400;
+num_w = length(w);
+F_w = w*0;
+F_w(499*num_w/800:598*num_w/800) = 1;
+delta_t = 1/800;
+f_t = (1:1/delta_t)*0;
+for t_num = 1:1/delta_t;
+    f_t(t_num) = sum(F_w.*exp(1j*2*pi*w*t_num*delta_t))*delta_w;  
+end
+figure;
+plot(abs(f_t));
+t = 0:delta_t:1-delta_t;
+f_t_theory = (exp(1j*400*pi*t)-exp(1j*100*pi*t))./(1j*2*pi*t);
+f_t_theory(1) = f_t_theory(2);
+figure;
+plot(abs(f_t_theory));
+F_w_theory = abs(fft(f_t_theory));
+figure;
+plot(F_w_theory);
+F_w_test = abs(fft(f_t));
+figure;
+plot(F_w_test);

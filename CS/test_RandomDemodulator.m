@@ -1,4 +1,4 @@
-function [ y,Phi ] = Zhang_RandomDemodulator( s,R )
+function [ y,Phi ] = test_RandomDemodulator( s,R )
 % RANDOMDEMODULATOR Compress the signal s using Random Demodulator
 % Based on algorithm proposed in "Beyond Nyquist: Efficient Sampling of Sparse Bandlimited Signals"
 % input s(W*1) is the original signal in frequency domain
@@ -18,18 +18,25 @@ D = diag(chip_seq);
 % Sampler Matrix H(R*W)
 comp = W/R;
 H = zeros(R,W);
+% rand_W = rand(W,1);
+% [~,idx_sort] = sort(rand_W,'ascend');
+% [idx_ss,~] = sort(idx_sort(1:R),'ascend');
 for i = 1:R
-    H(i,ceil(comp*(i-1))+1:floor(comp*i)) = 1;
-    if i>1
-        H(i,ceil(comp*(i-1)))=ceil(comp*(i-1))-comp*(i-1);
-    end
-    if i<R
-        H(i,floor(comp*i)+1)=comp*(i)-floor(comp*i);
-    end
+    H(i,i*comp) = 1;
 end
+% for i = 1:R
+
+%     H(i,ceil(comp*(i-1))+1:floor(comp*i)) = 1;
+%     if i>1
+%         H(i,ceil(comp*(i-1)))=ceil(comp*(i-1))-comp*(i-1);
+%     end
+%     if i<R
+%         H(i,floor(comp*i)+1)=comp*(i)-floor(comp*i);
+%     end
+% end
 
 
-M = H*D; % the action of the hardware system Matrix on x M(R*W)
+M = H;%*D; % the action of the hardware system Matrix on x M(R*W)
 
 % DFT Matrix F
 n = 1:W;

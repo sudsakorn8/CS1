@@ -2,11 +2,11 @@
 clear,clc;
 tic
 Channel_num = 10;% should divides 2 because of conjugate symmetry of spectrum
-Sparsity = 0.25; 
+Sparsity = 0.5; 
 Pf = 0.01;
 SNR = 100:2:100;
 SNR_num = length(SNR);
-CS_ratio = 0.5;
+CS_ratio = 0.7;
 CS_num = length(CS_ratio);
 lamdaRatio = 1;%0.25:0.25:2;
 lamdaRatio_num = length(lamdaRatio);

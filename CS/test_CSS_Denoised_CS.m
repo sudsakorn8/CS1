@@ -1,4 +1,4 @@
-function [ P_f,P_d,idx_Channel,if_vacant,E,E_ori,lamda_d,P_d_th,a_w,a_r ] = CSS_Denoised_CS( SNR,CS_ratio,Sparsity,Pf,lamdaRatio )
+function [ P_f,P_d,idx_Channel,if_vacant,E,E_ori,lamda_d,P_d_th,a_w,a_r ] = test_CSS_Denoised_CS( SNR,CS_ratio,Sparsity,Pf,lamdaRatio )
 % Denoised_CS returns the error number of recovery signal (of the 40
 % channels) in one trial using both traditional and proposed denoised CS algorithm
 % input SNR is the signal to noise ratio
@@ -53,13 +53,13 @@ for k = 1:N
     u(k) = a_w(k)*((exp(-2*pi*1i*(k-N/2)/N)-1)/(2*pi*1i*(k-N/2)));
 end
 u(N/2) = a_w(N/2)/N; 
-
+ 
 %% Compressing through Random Demodulator
-[ y2,y1,y,Phi,Omega_n ] = Time_RandomDemodulator( a_w,R );
+% [ y2,y1,y,Phi,Omega_n ] = time_RandomDemodulator( a_w,R );
 % figure
 % stem(Omega_n,abs(a_w));
 % title('signal in discrete frequency')
-% [y,Phi] = Zhang_RandomDemodulator(u,R);
+[y,Phi] = test_RandomDemodulator(a_w,R);
 %% Recovery signal 
 u_r = Gao_RobustCSS(y,Phi,N,sqrt(power_e),1e-2*norm(y,2)^2);
 % u_r = zeros(N,1);
@@ -72,11 +72,12 @@ fprintf('Recovered \n');
 % r = norm(u_r-u,2);
 
 % Recover a
-a_r = zeros(N,1);
-for k = 1:N
-    a_r(k) = u_r(k)/((exp(-2*pi*1i*(k-N/2)/N)-1)/(2*pi*1i*(k-N/2)));
-end
-a_r(N/2) = u_r(N/2)*N; 
+% a_r = zeros(N,1);
+% for k = 1:N
+%     a_r(k) = u_r(k)/((exp(-2*pi*1i*(k-N/2)/N)-1)/(2*pi*1i*(k-N/2)));
+% end
+% a_r(N/2) = u_r(N/2)*N; 
+a_r = u_r;
 % a_r=0;
 %% Denoised
 %a_r_d = (a_r>power_e) .* a_r;
