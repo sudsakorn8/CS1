@@ -2,15 +2,15 @@
 clear,clc;
 tic
 Channel_num = 10;% should divides 2 because of conjugate symmetry of spectrum
-Sparsity = 0.25; 
+Sparsity = 0.5; 
 Pf = 0.01;
-SNR = 100:2:100;
+SNR = -20:2:0;
 SNR_num = length(SNR);
-CS_ratio = 0.5;
+CS_ratio = 0.25;
 CS_num = length(CS_ratio);
 lamdaRatio = 1;%0.25:0.25:2;
 lamdaRatio_num = length(lamdaRatio);
-trial_num = 1; % trial number for calculating each Pd
+trial_num = 20; % trial number for calculating each Pd
 P_f = zeros(SNR_num,CS_num); % detection probability with different SNR and Compression ratio
 P_d = zeros(SNR_num,CS_num);
 P_d_th =zeros(SNR_num,CS_num);

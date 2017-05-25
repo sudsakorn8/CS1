@@ -55,17 +55,17 @@ end
 u(N/2) = a_w(N/2)/N; 
 
 %% Compressing through Random Demodulator
-[ y2,y1,y,Phi,Omega_n ] = Time_RandomDemodulator( a_w,R );
+% [ y2,y1,y,Phi,Omega_n ] = Time_RandomDemodulator( a_w,R );
 % figure
 % stem(Omega_n,abs(a_w));
 % title('signal in discrete frequency')
-% [y,Phi] = Zhang_RandomDemodulator(u,R);
+[y,Phi] = Zhang_RandomDemodulator(u,R);
 %% Recovery signal 
-u_r = Gao_RobustCSS(y,Phi,N,sqrt(power_e),1e-2*norm(y,2)^2);
+% u_r = Gao_RobustCSS(y,Phi,N,sqrt(power_e),1e-2*norm(y,2)^2);
 % u_r = zeros(N,1);
 % u_r = Zhang_CoSaMP( y,Phi,s );
 % u_r = Shen_IRLS(y,Phi,10e-8,s);
-% u_r = cs_irls(y,Phi,s);
+u_r = cs_irls(y,Phi,s);
 % u_r = cs_cosamp(y,Phi,s);
 fprintf('Recovered \n');
 % error
